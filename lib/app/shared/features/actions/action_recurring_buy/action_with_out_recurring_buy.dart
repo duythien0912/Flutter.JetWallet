@@ -157,7 +157,6 @@ class _ActionRecurringBuy extends HookWidget {
                 onItemTap(RecurringBuysType.monthly);
               },
             ),
-            const SpaceH40(),
           ],
         ),
       ],

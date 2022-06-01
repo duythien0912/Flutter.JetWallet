@@ -109,7 +109,6 @@ class _ActionRecurringBuy extends HookWidget {
             },
           ),
         ],
-        const SpaceH40(),
       ],
     );
   }
