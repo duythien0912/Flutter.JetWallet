@@ -5,10 +5,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:simple_kit/simple_kit.dart';
 
 import '../../../../../../../../../../shared/providers/service_providers.dart';
-//import '../../../../../../../../../screens/earn/components/earn_offer_details/earn_offer_details.dart';
-//import '../../../../../../../../../screens/earn/components/earn_subscription/earn_subscriptions.dart';
+import '../../../../../../../../../screens/earn/components/earn_offer_details/earn_offer_details.dart';
+import '../../../../../../../../../screens/earn/components/earn_subscription/earn_subscriptions.dart';
+import '../../../../../../../../../screens/earn/earn.dart';
 import '../../../../../../../../../screens/market/helper/format_day_percentage_change.dart';
-//import '../../../../../../../../../screens/navigation/provider/navigation_stpod.dart';
+import '../../../../../../../../../screens/navigation/provider/navigation_stpod.dart';
 import '../../../../../../../../models/currency_model.dart';
 import '../../../../../../../../providers/base_currency_pod/base_currency_pod.dart';
 import '../../../../../../../earn/provider/earn_offers_pod.dart';
@@ -25,7 +26,7 @@ class WalletCard extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final intl = useProvider(intlPod);
-    //final navigation = useProvider(navigationStpod);
+    final navigation = useProvider(navigationStpod);
     final colors = useProvider(sColorPod);
     final baseCurrency = useProvider(baseCurrencyPod);
     final earnOffers = useProvider(earnOffersPod);
@@ -90,18 +91,7 @@ class WalletCard extends HookWidget {
               alignment: Alignment.topRight,
               child: InkWell(
                 onTap: () {
-                  showInterestRate(
-                    context: context,
-                    currency: currency,
-                    baseCurrency: baseCurrency,
-                    colors: colors,
-                    colorDayPercentage: colorDayPercentage(
-                      currency.dayPercentChange,
-                      colors,
-                    ),
-                  );
-
-                  /* if (filteredActiveEarnOffers.isEmpty) {
+                  if (filteredActiveEarnOffers.isEmpty) {
                     showSubscriptionBottomSheet(
                       context: context,
                       offers: filteredEarnOffers,
@@ -113,10 +103,16 @@ class WalletCard extends HookWidget {
                       earnOffer: filteredActiveEarnOffers[0],
                     );
                   } else {
-                    Navigator.pop(context);
                     navigation.state = 2;
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const Earn(),
+                      ),
+                      (route) => route.isFirst,
+                    );
+                    Navigator.pop(context);
                   }
-                  */
                 },
                 child: Container(
                   height: 24,

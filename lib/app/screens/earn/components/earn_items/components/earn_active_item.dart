@@ -27,7 +27,13 @@ class EarnActiveItem extends HookWidget {
     final earnOffers = useProvider(earnOffersPod);
     final intl = useProvider(intlPod);
 
-    earnOffers.sort((a, b) => b.currentApy.compareTo(a.currentApy));
+    earnOffers.sort((a, b) {
+      final compare = b.currentApy.compareTo(a.currentApy);
+      final aCurrency = currencyFrom(currencies, a.asset);
+      final bCurrency = currencyFrom(currencies, b.asset);
+      if (compare != 0) return compare;
+      return bCurrency.weight.compareTo(aCurrency.weight);
+    });
 
     final currentCurrency = currencyFrom(currencies, earnOffer.asset);
 
@@ -53,6 +59,8 @@ class EarnActiveItem extends HookWidget {
     }
 
     final isWidthDifferenceSmall = (currentWidth - processWidth) < 16;
+    final showProgress = (earnOffer.amountBaseAsset.toDouble() /
+        earnOffer.maxAmount.toDouble()) >= 0.3;
 
     Color getColorByTiers() {
       if (earnOffer.offerTag == 'Hot') {
@@ -160,7 +168,8 @@ class EarnActiveItem extends HookWidget {
                               padding: EdgeInsets.zero,
                               child: Row(
                                 children: [
-                                  if (earnOffer.offerTag == 'Hot') ...[
+                                  if (earnOffer.offerTag == 'Hot'
+                                      && showProgress) ...[
                                     EarnItemProgress(offer: earnOffer),
                                     const SpaceW10(),
                                   ] else ...[
