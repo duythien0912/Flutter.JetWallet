@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:logging/logging.dart';
@@ -19,6 +21,7 @@ import '../../app/shared/features/market_details/view/components/about_block/com
 import '../../app/shared/features/rewards/view/rewards.dart';
 import '../../app/shared/features/send_by_phone/notifier/send_by_phone_confirm_notifier/send_by_phone_confirm_notipod.dart';
 import '../../app/shared/features/send_by_phone/view/screens/send_by_phone_confirm.dart';
+import '../../app/shared/features/sms_autheticator/sms_authenticator.dart';
 import '../../app/shared/models/currency_model.dart';
 import '../../auth/screens/email_verification/notifier/email_verification_notipod.dart';
 import '../../auth/screens/forgot_password/notifier/confirm_password_reset/confirm_password_reset_notipod.dart';
@@ -26,6 +29,8 @@ import '../../auth/screens/forgot_password/view/confirm_password_reset.dart';
 import '../../auth/screens/login/login.dart';
 import '../../router/notifier/startup_notifier/authorized_union.dart';
 import '../../router/notifier/startup_notifier/startup_notipod.dart';
+import '../../router/provider/authorization_stpod/authorization_stpod.dart';
+import '../../router/provider/authorization_stpod/authorization_union.dart';
 import '../helpers/launch_url.dart';
 import '../helpers/navigator_push.dart';
 import '../notifiers/logout_notifier/logout_notipod.dart';
@@ -54,6 +59,8 @@ const _depositStart = 'DepositStart';
 const _kycVerification = 'KycVerification';
 const _tradingStart = 'TradingStart';
 const _earnLanding = 'EarnLanding';
+const _marketsScreen = 'MarketsScreen';
+const _authenticatorSettings = 'AuthenticatorSettings';
 const _recurringBuyStart = 'RecurringBuyStart';
 
 enum SourceScreen {
@@ -116,6 +123,10 @@ class DeepLinkService {
       _tradingStartCommand(source);
     } else if (command == _depositStart) {
       _depositStartCommand(source);
+    } else if (command == _marketsScreen) {
+      _marketsScreenCommand();
+    } else if (command == _authenticatorSettings) {
+      _authenticatorSettingsCommand();
     } else if (command == _recurringBuyStart) {
       _recurringBuyStartCommand();
     } else {
@@ -373,6 +384,57 @@ class DeepLinkService {
       sAnalytics.earnProgramView(Source.marketBanner);
     } else if (source == SourceScreen.bannerOnRewards) {
       sAnalytics.earnProgramView(Source.rewards);
+    }
+  }
+
+  void _marketsScreenCommand() {
+    final auth = read(authorizationStpod);
+    final context = read(sNavigatorKeyPod).currentContext;
+
+    if (auth.state == AuthorizationUnion.authorized.call()) {
+      read(navigationStpod).state = 0;
+    } else {
+      if (context != null) {
+        navigatorPush(
+          context,
+          const Login(),
+        );
+      }
+    }
+  }
+
+  void _authenticatorSettingsCommand() {
+    final auth = read(authorizationStpod);
+    final context = read(sNavigatorKeyPod).currentContext;
+
+    if (context != null) {
+      // navigatorPush(
+      //   read(sNavigatorKeyPod).currentContext!,
+      //   const SmsAuthenticator(),
+      // );
+
+      if (Platform.isAndroid) {
+        if (auth.state == AuthorizationUnion.authorized.call()) {
+          navigatorPush(
+            read(sNavigatorKeyPod).currentContext!,
+            const SmsAuthenticator(),
+          );
+        } else {
+          navigatorPush(
+            read(sNavigatorKeyPod).currentContext!,
+            const Login(),
+          );
+        }
+      }
+
+      if (Platform.isIOS) {
+        if (auth.state == AuthorizationUnion.authorized.call()) {
+          navigatorPush(
+            read(sNavigatorKeyPod).currentContext!,
+            const SmsAuthenticator(),
+          );
+        }
+      }
     }
   }
 }
