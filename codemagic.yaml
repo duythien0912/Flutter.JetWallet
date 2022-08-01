@@ -257,7 +257,7 @@ workflows:
     scripts: *scripts
     publishing: *publishing
     artifacts: *artifacts
-    triggering: *stage_triggering
+    # triggering: *stage_triggering
 
   flavor_production_target_stage:
     name: Flavor (Production) Target (Stage)
