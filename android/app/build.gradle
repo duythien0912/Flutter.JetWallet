@@ -74,7 +74,7 @@ android {
     productFlavors { 
         prod {
             dimension "app"
-            applicationId "app.simple.com"
+            applicationId "simple.com"
         }
         stage {
             dimension "app"

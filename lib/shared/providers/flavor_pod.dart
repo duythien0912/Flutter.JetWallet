@@ -12,7 +12,8 @@ final flavorPod = Provider<Flavor>(
   (ref) {
     final packageInfo = ref.read(packageInfoPod);
 
-    if (packageInfo.packageName == 'app.simple.com') {
+    if (packageInfo.packageName == 'app.simple.com' ||
+        packageInfo.packageName == 'simple.com') {
       return Flavor.prod;
     } else if (packageInfo.packageName == 'stage.app.simple.com') {
       return Flavor.stage;
